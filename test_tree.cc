@@ -122,9 +122,9 @@ void test_bplus_tree() {
 int main(int argc, char const *argv[]) {
     // test_avl_tree();
 
-    // test_rb_tree();
+    test_rb_tree();
 
-    test_btree();
+    // test_btree();
 
     // test_bplus_tree();
 

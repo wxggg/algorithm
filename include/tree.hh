@@ -1,6 +1,6 @@
+#include <functional>
 #include <iostream>
 #include <queue>
-#include <functional>
 #include <stack>
 
 using std::queue;
@@ -139,8 +139,7 @@ inline __tree_node_base *__erase(__tree_node_base *z, __tree_node_base *&root,
             else
                 z->parent->right = x;
         }
-    } else  // y!=z so z->left and z->right must exists
-    {
+    } else {  // y!=z so z->left and z->right must exists
         z->left->parent = y;
         y->left = z->left;
         if (y == z->right)
@@ -485,8 +484,7 @@ class rb_tree {
                 // because tree x needs one more black, x's brother w must exist
                 auto w = x_parent->right;
 
-                if (w->color == __red)  // this make sure that w is black
-                {
+                if (w->color == __red) {  // this make sure that w is black
                     std::swap(w->color, x_parent->color);
                     __rotate_left(x_parent, base_root());
                     w = x_parent->right;
@@ -497,8 +495,7 @@ class rb_tree {
                     w->color = __red;
                     x = x_parent;
                     x_parent = x_parent->parent;
-                } else  // there's at least one red on childs of w
-                {
+                } else {  // there's at least one red on childs of w
                     if (__is_red(w->left)) {
                         std::swap(w->left->color, w->color);
                         __rotate_right(w, base_root());
@@ -506,10 +503,10 @@ class rb_tree {
                     }
                     // w extends x_parent's color,while x_parent turn black
                     std::swap(w->color, x_parent->color);
-                    if (w->right)  // if w->right exists, then it must be red,
-                                   // and needs one more black
-                        w->right->color = __black;
                     __rotate_left(x_parent, base_root());
+                    // if w->right exists, then it must be red,
+                    // and needs one more black
+                    if (w->right) w->right->color = __black;
                     break;
                 }
             } else {
@@ -532,8 +529,8 @@ class rb_tree {
                         w = x_parent->right;
                     }
                     std::swap(w->color, x_parent->color);
-                    if (w->left) w->left->color = __black;
                     __rotate_right(x_parent, base_root());
+                    if (w->left) w->left->color = __black;
                     break;
                 }
             }
