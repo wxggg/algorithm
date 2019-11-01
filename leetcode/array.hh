@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,7 @@ using std::map;
 using std::max;
 using std::min;
 using std::sort;
+using std::stack;
 using std::string;
 using std::swap;
 using std::vector;
@@ -709,6 +711,33 @@ vector<vector<int>> subsets(vector<int> &nums) {
     return res;
 }
 
+void subsetsWithDup(vector<vector<int>> &res, vector<int> &nums,
+                    vector<int> &vec, int i) {
+    if (i == nums.size()) {
+        res.push_back(vec);
+        return;
+    }
+
+    vec.push_back(nums[i]);
+    subsetsWithDup(res, nums, vec, i + 1);
+    vec.pop_back();
+
+    ++i;
+    while (i < nums.size() && nums[i] == nums[i - 1]) ++i;
+    subsetsWithDup(res, nums, vec, i);
+}
+
+/**
+ * https://leetcode.com/problems/subsets-ii/
+ */
+vector<vector<int>> subsetsWithDup(vector<int> &nums) {
+    sort(nums.begin(), nums.end());
+    vector<vector<int>> res;
+    vector<int> vec;
+    subsetsWithDup(res, nums, vec, 0);
+    return res;
+}
+
 bool exist(vector<vector<char>> &board, vector<vector<bool>> &visited, int m,
            int n, int i, int j, string &word, int k) {
     if (k == word.size()) return true;
@@ -737,3 +766,65 @@ bool exist(vector<vector<char>> &board, string word) {
             if (exist(board, visited, m, n, i, j, word, 0)) return true;
     return false;
 }
+
+/**
+ * https://leetcode.com/problems/largest-rectangle-in-histogram/
+ */
+int largestRectangleArea(vector<int> &heights) {
+    heights.push_back(0);
+    stack<int> stk;
+    int i = 0, res = 0, h;
+    while (i < heights.size()) {
+        if (stk.empty() || heights[i] >= heights[stk.top()])
+            stk.push(i++);
+        else {
+            h = stk.top(), stk.pop();
+            res = max(res, heights[h] * (stk.empty() ? i : i - stk.top() - 1));
+        }
+    }
+    return res;
+}
+
+int expand(vector<vector<char>> &matrix, int i, int j, int m, int n) {
+    int res = m * n, flag = 0;
+    int x = i + m, y = j + n, k;
+    if (x < matrix.size()) {
+        for (k = 0, flag = 0; k < n; k++)
+            if (matrix[x][j + k] == '0') {
+                flag = 1;
+                break;
+            }
+        if (!flag) res = max(res, expand(matrix, i, j, m + 1, n));
+    }
+    if (y < matrix[0].size()) {
+        for (k = 0, flag = 0; k < m; k++)
+            if (matrix[i + k][y] == '0') {
+                flag = 1;
+                break;
+            }
+        if (!flag) res = max(res, expand(matrix, i, j, m, n + 1));
+    }
+    return res;
+}
+
+/**
+ * https://leetcode.com/problems/maximal-rectangle/
+ */
+int maximalRectangle(vector<vector<char>> &matrix) {
+    if (matrix.empty()) return 0;
+    int res = 0;
+    for (int i = 0; i < matrix.size(); i++)
+        for (int j = 0; j < matrix[0].size(); j++)
+            if (matrix[i][j] == '1') res = max(res, expand(matrix, i, j, 1, 1));
+    return res;
+}
+
+/**
+ * https://leetcode.com/problems/merge-sorted-array/
+ */
+void merge(vector<int> &nums1, int m, vector<int> &nums2, int n) {
+    while (n > 0)
+        nums1[m + n - 1] =
+            (m < 1 || nums1[m - 1] < nums2[n - 1]) ? nums2[--n] : nums1[--m];
+}
+
